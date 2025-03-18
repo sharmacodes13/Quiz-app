@@ -5,7 +5,8 @@ function App() {
   const [timerEnabled, setTimerEnabled] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-200 via-purple-100 to-blue-200
+">
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6 text-center">
           <label className="inline-flex items-center cursor-pointer">
@@ -27,4 +28,4 @@ function App() {
   )
 }
 
-export default App
+export default App 

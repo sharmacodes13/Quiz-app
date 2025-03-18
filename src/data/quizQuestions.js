@@ -1,11 +1,4 @@
-export interface Question {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: string;
-}
-
-const quizQuestions: Question[] = [
+const quizQuestions = [
   {
     id: 1,
     question: "What is the capital of France?",

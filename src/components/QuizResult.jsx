@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
-import { Question } from '../data/quizQuestions';
 
-interface QuizResultProps {
-  score: number;
-  totalQuestions: number;
-  onRestart: () => void;
-  userAnswers: string[];
-  questions: Question[];
-}
-
-const QuizResult: React.FC<QuizResultProps> = ({
+const QuizResult = ({
   score,
   totalQuestions,
   onRestart,
@@ -43,7 +34,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
     }
   };
 
-  const getAnswerColor = (questionIndex: number, answer: string) => {
+  const getAnswerColor = (questionIndex, answer) => {
     const isCorrect = answer === questions[questionIndex].correctAnswer;
     const isUserAnswer = answer === userAnswers[questionIndex];
     
@@ -56,8 +47,8 @@ const QuizResult: React.FC<QuizResultProps> = ({
   };
 
   return (
-    <div className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Quiz Completed!</h2>
+    <div className="w-full max-w-2xl p-6 bg-white bg-opacity-90 rounded-lg shadow-lg border border-blue-100">
+      <h2 className="text-2xl font-bold mb-4 text-center text-blue-800">Quiz Completed!</h2>
       
       <div className="text-center mb-6">
         <p className="text-4xl font-bold mb-2">
@@ -76,15 +67,15 @@ const QuizResult: React.FC<QuizResultProps> = ({
         </button>
         <button
           onClick={() => setShowAnswers(!showAnswers)}
-          className="px-6 py-2 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 transition-colors"
+          className="px-6 py-2 bg-blue-100 text-blue-800 font-medium rounded-md hover:bg-blue-200 transition-colors"
         >
           {showAnswers ? "Hide Answers" : "Show Answers"}
         </button>
       </div>
       
       {showAnswers && (
-        <div className="mt-8 border-t pt-6">
-          <h3 className="text-xl font-bold mb-4 text-gray-800">Question Review</h3>
+        <div className="mt-8 border-t border-blue-100 pt-6">
+          <h3 className="text-xl font-bold mb-4 text-blue-800">Question Review</h3>
           
           <div className="space-y-6">
             {questions.map((question, qIndex) => (

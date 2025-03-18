@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Question from './Question';
-// @ts-ignore
 import QuizResult from './QuizResult';
 import quizQuestions from '../data/quizQuestions';
 
-interface QuizProps {
-  enableTimer?: boolean;
-  timePerQuestion?: number;
-}
-
-const Quiz: React.FC<QuizProps> = ({ 
+const Quiz = ({ 
   enableTimer = false, 
   timePerQuestion = 30 
 }) => {
@@ -18,7 +12,7 @@ const Quiz: React.FC<QuizProps> = ({
   const [showResult, setShowResult] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [timer, setTimer] = useState(enableTimer ? timePerQuestion : 0);
-  const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  const [userAnswers, setUserAnswers] = useState([]);
 
   // Reset timer when moving to a new question
   useEffect(() => {
@@ -40,7 +34,7 @@ const Quiz: React.FC<QuizProps> = ({
     return () => clearInterval(timerInterval);
   }, [currentQuestionIndex, enableTimer, quizCompleted, timePerQuestion]);
 
-  const handleAnswerSelected = (selectedAnswer: string) => {
+  const handleAnswerSelected = (selectedAnswer) => {
     const currentQuestion = quizQuestions[currentQuestionIndex];
     
     // Update the score if the answer is correct
@@ -81,8 +75,10 @@ const Quiz: React.FC<QuizProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">React Quiz App</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent">
+      <h1 className="text-4xl font-bold mb-8 text-center text-blue-800 drop-shadow-sm">
+        <span className="text-blue-600">Quiz</span> Master
+      </h1>
       
       {!quizCompleted ? (
         <div className="w-full max-w-2xl">

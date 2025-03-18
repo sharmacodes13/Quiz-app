@@ -1,6 +1,6 @@
 # React Quiz App
 
-A modern quiz application built with React, TypeScript, and Tailwind CSS.
+A modern quiz application built with React and Tailwind CSS.
 
 ## Features
 
@@ -11,22 +11,23 @@ A modern quiz application built with React, TypeScript, and Tailwind CSS.
 - **Timer functionality**: Optional countdown timer for each question
 - **Restart quiz**: Option to retake the quiz after completion
 - **Responsive design**: Works on mobile, tablet, and desktop devices
+- **Beautiful UI**: Gradient blue theme for a pleasant user experience
 
 ## Tech Stack
 
 - React.js 
-- TypeScript
+- JavaScript
 - Vite (for fast development)
 - Tailwind CSS (for styling)
 
 ## Project Structure
 
 - `src/components/` - Contains React components
-  - `Question.tsx` - Component to display a single question
-  - `Quiz.tsx` - Main component that manages the quiz state
-  - `QuizResult.tsx` - Component to display the final quiz results
+  - `Question.jsx` - Component to display a single question
+  - `Quiz.jsx` - Main component that manages the quiz state
+  - `QuizResult.jsx` - Component to display the final quiz results
 - `src/data/` - Contains data files
-  - `quizQuestions.ts` - Quiz questions data with TypeScript interfaces
+  - `quizQuestions.js` - Quiz questions data
 
 ## Getting Started
 
@@ -56,7 +57,7 @@ npm install
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. Open your browser and navigate to the local URL displayed in the terminal (usually `http://localhost:5173`)
 
 ## How to Use
 
@@ -73,20 +74,20 @@ npm run dev
 
 ### Adding More Questions
 
-You can add more questions to the quiz by editing the `src/data/quizQuestions.ts` file. Each question should follow the Question interface:
+You can add more questions to the quiz by editing the `src/data/quizQuestions.js` file. Each question should follow this structure:
 
-```typescript
+```javascript
 {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: string;
+  id: number,
+  question: string,
+  options: [string, string, ...],
+  correctAnswer: string
 }
 ```
 
 ### Changing Timer Duration
 
-You can modify the timer duration by changing the `timePerQuestion` prop in the `App.tsx` file.
+You can modify the timer duration by changing the `timePerQuestion` prop in the `App.jsx` file.
 
 ## License
 
@@ -94,5 +95,5 @@ MIT
 
 ## Acknowledgments
 
-- Created as a project for learning React, TypeScript, and Tailwind CSS
-- Inspired by various quiz applications and coding challenges
+- Created as a project for learning React and Tailwind CSS
+- Features a beautiful blue gradient theme throughout the application
