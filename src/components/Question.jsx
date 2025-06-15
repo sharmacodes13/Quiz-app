@@ -11,10 +11,10 @@ const Question = ({
   // Reset selectedAnswer when question changes
   useEffect(() => {
     setSelectedAnswer(null);
-  }, [question.id]);
+  }, [question.question]);
 
   const handleAnswerClick = (answer) => {
-    if (selectedAnswer) return; // Prevent changing answer after selection
+    if (selectedAnswer || showResult) return; // Prevent changing answer after selection or when showing result
     setSelectedAnswer(answer);
     onAnswerSelected(answer);
   };
@@ -53,7 +53,7 @@ const Question = ({
               selectedAnswer === option ? 'border-blue-500' : 'border-blue-200'
             } hover:bg-blue-50`}
             onClick={() => handleAnswerClick(option)}
-            disabled={showResult}
+            disabled={showResult || selectedAnswer !== null}
           >
             {option}
           </button>
