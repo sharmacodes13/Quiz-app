@@ -73,51 +73,32 @@ const Quiz = ({
   }, [currentQuestionIndex, enableTimer, quizCompleted, timePerQuestion, loading]);
 
   const handleAnswerSelected = (selectedAnswer) => {
-    const currentQuestion = questions[currentQuestionIndex];
-    console.log('Answer selected:', {
-      questionIndex: currentQuestionIndex,
-      selectedAnswer,
-      correctAnswer: currentQuestion.correctAnswer,
-      isLastQuestion: currentQuestionIndex === questions.length - 1
-    });
-    
-    // Update the score if the answer is correct
-    if (selectedAnswer === currentQuestion.correctAnswer) {
-      console.log('Correct answer! Updating score...');
-      setScore(prevScore => {
-        const newScore = prevScore + 1;
-        console.log(`Score updated: ${prevScore} -> ${newScore}`);
-        return newScore;
-      });
-    } else {
-      console.log('Incorrect answer. Current score:', score);
-    }
-    
-    // Save user's answer
+    console.log('Answer selected:', selectedAnswer);
+    console.log('Current question:', questions[currentQuestionIndex]);
+    console.log('Correct answer:', questions[currentQuestionIndex].correctAnswer);
+    console.log('Is last question:', currentQuestionIndex === questions.length - 1);
+
+    const isCorrect = selectedAnswer === questions[currentQuestionIndex].correctAnswer;
+    const newScore = isCorrect ? score + 1 : score;
+    setScore(newScore);
+
     const newUserAnswers = [...userAnswers];
-    newUserAnswers[currentQuestionIndex] = selectedAnswer;
+    newUserAnswers[currentQuestionIndex] = {
+      question: questions[currentQuestionIndex].question,
+      userAnswer: selectedAnswer,
+      correctAnswer: questions[currentQuestionIndex].correctAnswer,
+      isCorrect
+    };
     setUserAnswers(newUserAnswers);
-    console.log('User answers updated:', newUserAnswers);
-    
-    // Show the result for 1.5 seconds before moving to the next question
-    setShowResult(true);
-    
-    // Check if this is the last question
+
     if (currentQuestionIndex === questions.length - 1) {
-      console.log('Last question completed. Preparing to show final results...');
-      setTimeout(() => {
-        console.log('Setting quiz as completed...');
-        setShowResult(false);
-        setQuizCompleted(true);
-        if (onQuizEnd) {
-          console.log('Calling onQuizEnd callback...');
-          onQuizEnd();
-        }
-      }, 1500);
+      console.log('Last question completed');
+      setQuizCompleted(true);
+      setShowResult(true);
+      console.log('Quiz completed, calling onQuizEnd');
+      onQuizEnd();
     } else {
-      setTimeout(() => {
-        handleNextQuestion();
-      }, 1500);
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
   };
 

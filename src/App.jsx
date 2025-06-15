@@ -1,42 +1,34 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import QuizSetup from './components/QuizSetup';
-import Quiz from './components/Quiz';
-import LandingPage from './components/LandingPage';
+import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import QuizSetup from './components/QuizSetup'
+import Quiz from './components/Quiz'
+import LandingPage from './components/LandingPage'
+import { Analytics } from '@vercel/analytics/react'
 
 function App() {
-  const [quizConfig, setQuizConfig] = useState(null);
-  const [showResults, setShowResults] = useState(false);
+  const [quizConfig, setQuizConfig] = useState(null)
+  const [showResults, setShowResults] = useState(false)
 
   const handleQuizStart = (config) => {
-    setQuizConfig(config);
-    setShowResults(false);
-  };
+    setQuizConfig(config)
+    setShowResults(false)
+  }
 
   const handleQuizEnd = () => {
-    setShowResults(true);
-  };
+    setShowResults(true)
+  }
 
   const handleRestart = () => {
-    setQuizConfig(null);
-    setShowResults(false);
-  };
+    setQuizConfig(null)
+    setShowResults(false)
+  }
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <Analytics />
+      <div className="min-h-screen bg-gradient-to-b from-[#f0efff] via-[#e8e7ff] to-[#e0dfff]">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/quiz-setup"
-            element={
-              !quizConfig ? (
-                <QuizSetup onStart={handleQuizStart} />
-              ) : (
-                <Navigate to="/quiz" replace />
-              )
-            }
-          />
           <Route
             path="/quiz"
             element={
@@ -50,14 +42,14 @@ function App() {
                   onRestart={handleRestart}
                 />
               ) : (
-                <Navigate to="/quiz-setup" replace />
+                <QuizSetup onStart={handleQuizStart} />
               )
             }
           />
         </Routes>
       </div>
     </Router>
-  );
+  )
 }
 
-export default App; 
+export default App 

@@ -10,11 +10,15 @@ const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 // Validate API key
 if (!GEMINI_API_KEY) {
-  console.error('Gemini API key is missing. Please check:');
-  console.error('1. Your .env file exists in the project root');
-  console.error('2. The .env file contains: VITE_GEMINI_API_KEY=your_api_key');
-  console.error('3. You have restarted the development server after creating the .env file');
-  console.error('Current environment variables:', import.meta.env);
+  console.error('Gemini API key is not configured. Please check:');
+  console.error('1. For local development:');
+  console.error('   - Create a .env file in the project root');
+  console.error('   - Add: VITE_GEMINI_API_KEY=your_api_key');
+  console.error('   - Restart the development server');
+  console.error('2. For production:');
+  console.error('   - Add VITE_GEMINI_API_KEY to your hosting platform\'s environment variables');
+  console.error('   - Redeploy your application');
+  console.error('Get your API key from: https://makersuite.google.com/app/apikey');
 }
 
 export { GEMINI_API_KEY }; 
