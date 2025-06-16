@@ -6,7 +6,7 @@ export const API_CONFIG = {
 };
 
 // Get API key from environment variable
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
 
 // Validate API key
 if (!GEMINI_API_KEY) {
@@ -16,7 +16,7 @@ if (!GEMINI_API_KEY) {
   console.error('   - Add: VITE_GEMINI_API_KEY=your_api_key');
   console.error('   - Restart the development server');
   console.error('2. For production:');
-  console.error('   - Add VITE_GEMINI_API_KEY to your hosting platform\'s environment variables');
+  console.error('   - Add VITE_GEMINI_API_KEY to your Vercel environment variables');
   console.error('   - Redeploy your application');
   console.error('Get your API key from: https://makersuite.google.com/app/apikey');
 }

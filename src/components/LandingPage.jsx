@@ -73,7 +73,7 @@ const LandingPage = () => {
                     {category.description}
                   </p>
                   <Link
-                    to={`/quiz-setup?category=${category.id}`}
+                    to={`/quiz?category=${category.id}`}
                     className="inline-flex items-center px-6 py-3 bg-white text-[#736ddf] rounded-xl hover:bg-gray-100 hover:text-[#5f5ac4] transition-all duration-300 font-medium"
                   >
                     Start Quiz
@@ -95,7 +95,7 @@ const LandingPage = () => {
         {/* Call to Action */}
         <div className="text-center">
           <Link
-            to="/quiz-setup"
+            to="/quiz"
             className="inline-flex items-center px-8 py-4 bg-blue-600 text-white text-xl font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-sm hover:shadow-md"
           >
             Start Your Quiz Journey
