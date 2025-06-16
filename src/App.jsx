@@ -1,25 +1,16 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import QuizSetup from './components/QuizSetup'
 import Quiz from './components/Quiz'
 import LandingPage from './components/LandingPage'
 import { Analytics } from '@vercel/analytics/react'
 
-function App() {
+// Separate component to handle routing logic
+const QuizRoutes = () => {
   const [quizConfig, setQuizConfig] = useState(null)
   const [showResults, setShowResults] = useState(false)
   const location = useLocation()
-
-  useEffect(() => {
-    // Check if there's a category in the URL
-    const params = new URLSearchParams(location.search)
-    const category = params.get('category')
-    
-    if (category && !quizConfig) {
-      // If there's a category in the URL and no quiz config, show the quiz setup
-      setQuizConfig({ category })
-    }
-  }, [location.search, quizConfig])
+  const navigate = useNavigate()
 
   const handleQuizStart = (config) => {
     setQuizConfig(config)
@@ -33,40 +24,45 @@ function App() {
   const handleRestart = () => {
     setQuizConfig(null)
     setShowResults(false)
+    navigate('/')
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f0efff] via-[#e8e7ff] to-[#e0dfff]">
-      <Analytics />
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/quiz"
-          element={
-            quizConfig ? (
-              <Quiz
-                enableTimer={quizConfig.enableTimer}
-                timePerQuestion={quizConfig.timePerQuestion}
-                category={quizConfig.category}
-                difficulty={quizConfig.difficulty}
-                onQuizEnd={handleQuizEnd}
-                onRestart={handleRestart}
-              />
-            ) : (
-              <QuizSetup onStart={handleQuizStart} />
-            )
-          }
-        />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route
+        path="/quiz"
+        element={
+          quizConfig ? (
+            <Quiz
+              enableTimer={quizConfig.enableTimer}
+              timePerQuestion={quizConfig.timePerQuestion}
+              category={quizConfig.category}
+              difficulty={quizConfig.difficulty}
+              onQuizEnd={handleQuizEnd}
+              onRestart={handleRestart}
+            />
+          ) : (
+            <QuizSetup 
+              onStart={handleQuizStart}
+              initialCategory={new URLSearchParams(location.search).get('category')}
+            />
+          )
+        }
+      />
+    </Routes>
   )
 }
 
-// Wrap App with Router and useLocation
-const AppWithRouter = () => (
-  <Router>
-    <App />
-  </Router>
-)
+function App() {
+  return (
+    <Router>
+      <div className="min-h-screen bg-gradient-to-b from-[#f0efff] via-[#e8e7ff] to-[#e0dfff]">
+        <Analytics />
+        <QuizRoutes />
+      </div>
+    </Router>
+  )
+}
 
-export default AppWithRouter 
+export default App 
