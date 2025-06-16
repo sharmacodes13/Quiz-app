@@ -28,8 +28,41 @@ export async function generateQuestions(category, difficulty) {
     // Get the generative model
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+    // More specific prompt based on category
+    let categorySpecificPrompt = '';
+    switch (category) {
+      case 'indian-history':
+        categorySpecificPrompt = 'Focus specifically on Indian history, including ancient, medieval, and modern periods. Include questions about Indian rulers, dynasties, freedom movement, and cultural heritage.';
+        break;
+      case 'world-history':
+        categorySpecificPrompt = 'Focus on global historical events, major world civilizations, important historical figures, and significant world events.';
+        break;
+      case 'science':
+        categorySpecificPrompt = 'Focus on scientific concepts, discoveries, and principles across physics, chemistry, and biology.';
+        break;
+      case 'technology':
+        categorySpecificPrompt = 'Focus on computer science, programming, digital technology, and technological innovations.';
+        break;
+      case 'geography':
+        categorySpecificPrompt = 'Focus on physical geography, countries, capitals, landmarks, and geographical features.';
+        break;
+      default:
+        categorySpecificPrompt = `Focus specifically on ${category} related topics.`;
+    }
+
     // Optimized prompt for faster generation
     const prompt = `Create 10 multiple choice questions about ${category} (${difficulty} level).
+    ${categorySpecificPrompt}
+    
+    Important guidelines:
+    1. Questions must be strictly relevant to the specified category
+    2. For Indian history, focus only on Indian historical events and figures
+    3. For world history, focus on global historical events
+    4. Each question should have exactly 4 options
+    5. The correct answer must be one of the provided options
+    6. Questions should be clear and unambiguous
+    7. Difficulty level should match the specified ${difficulty} level
+    
     Format: JSON array with objects containing:
     - question: string
     - options: array of 4 strings

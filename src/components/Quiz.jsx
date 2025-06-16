@@ -91,21 +91,25 @@ const Quiz = ({
     };
     setUserAnswers(newUserAnswers);
 
-    if (currentQuestionIndex === questions.length - 1) {
-      console.log('Last question completed');
-      setQuizCompleted(true);
-      setShowResult(true);
-      console.log('Quiz completed, calling onQuizEnd');
-      onQuizEnd();
-    } else {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
+    // Show result immediately after answer selection
+    setShowResult(true);
+
+    // Wait for 1.5 seconds before moving to next question or ending quiz
+    setTimeout(() => {
+      if (currentQuestionIndex === questions.length - 1) {
+        console.log('Last question completed');
+        setQuizCompleted(true);
+        console.log('Quiz completed, calling onQuizEnd');
+        onQuizEnd();
+      } else {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setShowResult(false);
+      }
+    }, 1500);
   };
 
   const handleNextQuestion = () => {
     console.log('Moving to next question...');
-    setShowResult(false);
-    
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     }
