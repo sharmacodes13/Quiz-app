@@ -26,7 +26,7 @@ export async function generateQuestions(category, difficulty) {
     console.log('Generating questions for:', { category, difficulty });
     
     // Get the generative model
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // More specific prompt based on category
     let categorySpecificPrompt = '';
