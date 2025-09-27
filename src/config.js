@@ -2,7 +2,7 @@
 
 // API Configuration
 export const API_CONFIG = {
-  GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
+  GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent'
 };
 
 // Get API key from environment variable
