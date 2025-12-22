@@ -26,7 +26,8 @@ export async function generateQuestions(category, difficulty) {
     console.log('Generating questions for:', { category, difficulty });
     
     // Get the generative model
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // Use a widely available, generally more stable model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // More specific prompt based on category
     let categorySpecificPrompt = '';
@@ -83,6 +84,8 @@ export async function generateQuestions(category, difficulty) {
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 1024,
+        // Ask Gemini to respond with pure JSON so we can parse reliably
+        responseMimeType: 'application/json',
       }
     });
 
@@ -90,15 +93,25 @@ export async function generateQuestions(category, difficulty) {
     const text = response.text();
     
     console.log('Received response from Gemini API');
+    console.log('Raw Gemini response text:', text);
     
-    // Extract the JSON array from the response
-    const jsonMatch = text.match(/\[\s*\{[\s\S]*\}\s*\]/);
-    if (!jsonMatch) {
-      console.error('Generated text:', text);
-      throw new Error('Invalid response format: Could not find JSON array in response');
-    }
+    let questions;
 
-    const questions = JSON.parse(jsonMatch[0]);
+    // Try parsing the whole response as JSON first
+    try {
+      questions = JSON.parse(text);
+    } catch (primaryParseError) {
+      console.warn('Primary JSON.parse failed, attempting to extract JSON array...', primaryParseError);
+      
+      // Fallback: Extract the JSON array from within any extra text
+      const jsonMatch = text.match(/\[\s*\{[\s\S]*\}\s*\]/);
+      if (!jsonMatch) {
+        console.error('Generated text (unparseable as JSON):', text);
+        throw new Error('Invalid response format: Could not find JSON array in response');
+      }
+
+      questions = JSON.parse(jsonMatch[0]);
+    }
     
     if (!Array.isArray(questions) || questions.length === 0) {
       throw new Error('Invalid response format: Questions array is empty or invalid');
@@ -110,6 +123,20 @@ export async function generateQuestions(category, difficulty) {
     return questions;
   } catch (error) {
     console.error('Error in generateQuestions:', error);
-    throw new Error(`Failed to generate questions: ${error.message}`);
+
+    // Handle overloaded / temporary errors from the API more gracefully
+    const rawMessage = error?.message || '';
+    const isOverloaded =
+      rawMessage.includes('503') ||
+      rawMessage.toLowerCase().includes('overloaded') ||
+      rawMessage.toLowerCase().includes('try again later');
+
+    if (isOverloaded) {
+      throw new Error(
+        'The question generator is temporarily overloaded. Please wait a few seconds and try starting the quiz again.'
+      );
+    }
+
+    throw new Error(`Failed to generate questions: ${rawMessage || 'Unknown error'}`);
   }
 } 
