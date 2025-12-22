@@ -26,8 +26,10 @@ export async function generateQuestions(category, difficulty) {
     console.log('Generating questions for:', { category, difficulty });
     
     // Get the generative model
-    // Use a widely available, generally more stable model
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Note: The current SDK in this project is using the v1beta API,
+    // which does not support some of the newer 1.5 models for generateContent.
+    // Use gemini-2.5-flash here, which is available for v1beta in this setup.
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // More specific prompt based on category
     let categorySpecificPrompt = '';
