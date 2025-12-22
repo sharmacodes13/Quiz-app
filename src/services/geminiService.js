@@ -96,7 +96,9 @@ Respond with ONLY the JSON array, nothing else.`;
     const text = response.text();
     
     console.log('Received response from Gemini API');
-    console.log('Raw Gemini response text:', text);
+    console.log('Raw Gemini response text (length):', text.length);
+    console.log('Raw Gemini response text (first 500 chars):', text.substring(0, 500));
+    console.log('Raw Gemini response text (last 500 chars):', text.substring(Math.max(0, text.length - 500)));
     
     let questions;
 
@@ -104,52 +106,84 @@ Respond with ONLY the JSON array, nothing else.`;
     try {
       // Strategy 1: Try parsing the whole response as JSON first
       questions = JSON.parse(text);
+      console.log('✅ Strategy 1 succeeded: Direct JSON parse');
     } catch (primaryParseError) {
-      console.warn('Primary JSON.parse failed, attempting extraction strategies...');
+      console.warn('❌ Strategy 1 failed:', primaryParseError.message);
+      console.warn('Attempting extraction strategies...');
       
       // Strategy 2: Remove markdown code blocks if present
       let cleanedText = text.trim();
+      console.log('Cleaned text (before markdown removal, length):', cleanedText.length);
       
       // Remove markdown code blocks (```json ... ``` or ``` ... ```)
       cleanedText = cleanedText.replace(/^```(?:json)?\s*/gm, '').replace(/```\s*$/gm, '');
+      cleanedText = cleanedText.trim();
+      console.log('Cleaned text (after markdown removal, length):', cleanedText.length);
+      console.log('Cleaned text (first 500 chars):', cleanedText.substring(0, 500));
       
       // Try parsing cleaned text
       try {
         questions = JSON.parse(cleanedText);
+        console.log('✅ Strategy 2 succeeded: JSON parse after markdown removal');
       } catch (secondParseError) {
+        console.warn('❌ Strategy 2 failed:', secondParseError.message);
+        console.log('Attempting Strategy 3: Regex extraction...');
+        
         // Strategy 3: Extract JSON array using multiple regex patterns
         let jsonMatch = null;
+        let extractedJson = null;
         
-        // Try to find JSON array with more flexible matching
+        // Try to find JSON array with more flexible matching - use greedy matching to get full array
         const patterns = [
-          /\[\s*\{[\s\S]*?\}\s*(?:,\s*\{[\s\S]*?\}\s*)*\]/,  // Standard array
-          /\[[\s\S]*?\]/,  // Any array-like structure
-          /\{[\s\S]*"question"[\s\S]*\}/,  // Single object with question field
+          {
+            name: 'Greedy array match',
+            pattern: /\[\s*\{[\s\S]*\}\s*\]/  // Greedy match for full array
+          },
+          {
+            name: 'Balanced brackets match',
+            pattern: /\[(?:[^\[\]]+|\[[^\]]*\])*\]/  // Match balanced brackets
+          },
+          {
+            name: 'Simple array match',
+            pattern: /\[[\s\S]{50,}?\]/  // Any array with at least 50 chars
+          },
         ];
         
-        for (const pattern of patterns) {
+        for (const { name, pattern } of patterns) {
+          console.log(`Trying pattern: ${name}`);
           jsonMatch = cleanedText.match(pattern);
           if (jsonMatch) {
+            extractedJson = jsonMatch[0];
+            console.log(`✅ Pattern "${name}" matched! Extracted length:`, extractedJson.length);
+            console.log('Extracted JSON (first 300 chars):', extractedJson.substring(0, 300));
+            
             try {
-              questions = JSON.parse(jsonMatch[0]);
+              questions = JSON.parse(extractedJson);
               if (Array.isArray(questions) && questions.length > 0) {
+                console.log(`✅ Strategy 3 succeeded with pattern "${name}": Found ${questions.length} questions`);
                 break;
               }
               // If it's a single object, wrap it in an array
               if (typeof questions === 'object' && questions.question) {
                 questions = [questions];
+                console.log(`✅ Strategy 3 succeeded: Wrapped single object into array`);
                 break;
               }
-            } catch (e) {
+              console.warn(`Pattern "${name}" matched but result is not a valid question array`);
+            } catch (parseError) {
+              console.warn(`Pattern "${name}" matched but JSON.parse failed:`, parseError.message);
               // Try next pattern
               continue;
             }
+          } else {
+            console.log(`Pattern "${name}" did not match`);
           }
         }
         
         if (!jsonMatch || !questions) {
-          console.error('All parsing strategies failed. Generated text:', text);
-          console.error('Cleaned text:', cleanedText);
+          console.error('❌ All parsing strategies failed!');
+          console.error('Full raw text:', text);
+          console.error('Full cleaned text:', cleanedText);
           throw new Error('Invalid response format: Could not find JSON array in response');
         }
       }
